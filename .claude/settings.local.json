@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm config *)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "WebSearch",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(jobs -l)",
+      "Bash(tee /tmp/nextdev.log)",
+      "Read(//tmp/**)",
+      "Bash(break)",
+      "Bash(curl -s \"http://localhost:3000/api/_debug-tenant?tenant=demo-shop\")",
+      "Bash(curl -s -H \"Host: acme.yourdomain.ir\" \"http://localhost:3000/api/_debug-tenant\")",
+      "Bash(curl -s \"http://localhost:3000/api/_debug-tenant\")",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(pkill -f \"next-server\")",
+      "Bash(rm -f /tmp/nextdev.log)",
+      "Bash(disown)",
+      "Bash(curl -s \"http://localhost:3000/api/debug-tenant?tenant=demo-shop\")",
+      "Bash(curl -s -H \"Host: acme.yourdomain.ir\" \"http://localhost:3000/api/debug-tenant\")",
+      "Bash(curl -s -H \"Host: yourdomain.ir\" \"http://localhost:3000/api/debug-tenant\")",
+      "Bash(curl -s \"http://localhost:3000/api/debug-tenant\")",
+      "Bash(curl -s -H \"x-tenant-slug: hacker\" \"http://localhost:3000/api/debug-tenant\")",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(docker run *)",
+      "Bash(pg_isready -h localhost -p 5436)",
+      "Bash(PGPASSWORD=postgres psql *)",
+      "WebFetch(domain:docs.iranpayamak.com)",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/send?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\"}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/send\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\"}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/send?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"12345\"}')",
+      "Bash(docker exec *)",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/verify?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\",\"code\":\"00000\"}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/verify?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\",\"code\":\"69368\"}')"
+    ]
+  }
+}
