@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useTenantQuery, withTenantQuery } from "@/hooks/use-tenant-query";
 
 type Step = "phone" | "otp" | "done";
 type Tier = "BRONZE" | "SILVER" | "GOLD";
@@ -16,11 +17,8 @@ const TIER_LABELS: Record<Tier, string> = {
   GOLD: "طلایی",
 };
 
-function withTenantQuery(path: string, tenantQuery: string) {
-  return tenantQuery ? `${path}?tenant=${tenantQuery}` : path;
-}
-
 export function LandingClient({ tenantName }: { tenantName: string }) {
+  const tenantQueryRef = useTenantQuery();
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
@@ -28,11 +26,6 @@ export function LandingClient({ tenantName }: { tenantName: string }) {
   const [loading, setLoading] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [customer, setCustomer] = useState<CustomerInfo | null>(null);
-  const tenantQueryRef = useRef("");
-
-  useEffect(() => {
-    tenantQueryRef.current = new URLSearchParams(window.location.search).get("tenant") ?? "";
-  }, []);
 
   useEffect(() => {
     if (step !== "otp" || secondsLeft <= 0) return;
@@ -183,7 +176,7 @@ export function LandingClient({ tenantName }: { tenantName: string }) {
             <p className="text-lg">به باشگاه مشتریان {tenantName} خوش آمدید!</p>
             <div className="rounded-xl bg-neutral-100 px-6 py-4">
               <p className="text-sm text-neutral-500">امتیاز شما</p>
-              <p className="text-2xl font-bold">{customer.points}</p>
+              <p className="text-2xl font-bold text-neutral-900">{customer.points}</p>
             </div>
             <p className="text-sm text-neutral-500">
               سطح عضویت: <span className="font-semibold">{TIER_LABELS[customer.tier]}</span>

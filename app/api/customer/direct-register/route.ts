@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getTenantFromHeaders } from "@/lib/tenant";
-import { redis } from "@/lib/redis";
-import { otpRedisKey } from "@/lib/otp";
 import { findOrCreateCustomerAndWelcome } from "@/lib/customer";
-import { signCustomerToken } from "@/lib/customer-token";
 
 const bodySchema = z.object({
   phone: z.string().regex(/^09\d{9}$/, "شماره موبایل نامعتبر است"),
-  code: z.string().length(5, "کد تایید باید ۵ رقم باشد"),
 });
 
 export async function POST(request: NextRequest) {
   const tenant = await getTenantFromHeaders(request.headers);
   if (!tenant) {
     return NextResponse.json({ error: "کسب‌وکار یافت نشد" }, { status: 404 });
+  }
+
+  if (!tenant.isActive) {
+    return NextResponse.json({ error: "این کسب‌وکار هنوز فعال نشده است" }, { status: 403 });
   }
 
   let body: unknown;
@@ -29,22 +29,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { phone, code } = parsed.data;
-  const key = otpRedisKey(tenant.id, phone);
-  const storedCode = await redis.get(key);
-
-  if (!storedCode || storedCode !== code) {
-    return NextResponse.json({ error: "کد تایید نامعتبر یا منقضی شده است" }, { status: 400 });
-  }
-
-  await redis.del(key);
-
-  const { customer } = await findOrCreateCustomerAndWelcome(tenant, phone);
-
-  const token = await signCustomerToken({ customerId: customer.id, tenantId: tenant.id });
+  const { customer, isNewCustomer } = await findOrCreateCustomerAndWelcome(tenant, parsed.data.phone);
 
   return NextResponse.json({
-    token,
+    success: true,
+    isNewCustomer,
     customer: {
       id: customer.id,
       phone: customer.phone,

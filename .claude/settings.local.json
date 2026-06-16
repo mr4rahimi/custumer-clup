@@ -44,7 +44,10 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
       "Bash(curl -s http://localhost:3000/)",
       "Bash(curl -s -X POST \"http://localhost:3000/api/business/signup\" -H \"Content-Type: application/json\" -d '{\"firstName\":\"تست\",\"lastName\":\"تستی\",\"phone\":\"09351112299\",\"businessName\":\"کافه دیباگ\",\"businessSlug\":\"debug-biz-1\"}')",
-      "Bash(kill 189032 189033 189045)"
+      "Bash(kill 189032 189033 189045)",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/direct-register?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09187654321\"}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/direct-register?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"12345\"}')",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/direct-register\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09187654321\"}')"
     ]
   }
 }

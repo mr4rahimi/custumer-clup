@@ -25,7 +25,7 @@ export default async function AdminCustomersPage() {
       ) : (
         <div className="overflow-x-auto rounded-xl border border-neutral-200">
           <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-right">
+            <thead className="bg-neutral-50 text-right text-neutral-900">
               <tr>
                 <th className="px-4 py-3 font-semibold">شماره موبایل</th>
                 <th className="px-4 py-3 font-semibold">امتیاز</th>
