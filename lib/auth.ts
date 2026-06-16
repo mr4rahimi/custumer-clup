@@ -14,19 +14,16 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         username: { label: "نام کاربری", type: "text" },
         password: { label: "رمز عبور", type: "password" },
-        tenantSlug: { label: "tenantSlug", type: "text" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password || !credentials?.tenantSlug) {
+        if (!credentials?.username || !credentials?.password) {
           return null;
         }
 
-        const tenant = await prisma.tenant.findUnique({ where: { slug: credentials.tenantSlug } });
+        const tenant = await prisma.tenant.findUnique({ where: { slug: credentials.username } });
         if (!tenant) return null;
 
-        const admin = await prisma.adminUser.findUnique({
-          where: { username_tenantId: { username: credentials.username, tenantId: tenant.id } },
-        });
+        const admin = await prisma.adminUser.findFirst({ where: { tenantId: tenant.id } });
         if (!admin) return null;
 
         const valid = await bcrypt.compare(credentials.password, admin.passwordHash);

@@ -17,6 +17,7 @@ const bodySchema = z.object({
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "لینک کسب‌وکار فقط می‌تواند شامل حروف انگلیسی، عدد و خط تیره باشد")
     .min(3, "لینک کسب‌وکار باید حداقل ۳ کاراکتر باشد")
     .max(30, "لینک کسب‌وکار باید حداکثر ۳۰ کاراکتر باشد"),
+  password: z.string().min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد"),
 });
 
 export async function POST(request: NextRequest) {
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { firstName, lastName, phone, businessName, businessSlug } = parsed.data;
+  const { firstName, lastName, phone, businessName, businessSlug, password } = parsed.data;
 
   if (RESERVED_SLUGS.includes(businessSlug)) {
     return NextResponse.json({ error: "این لینک کسب‌وکار قابل استفاده نیست" }, { status: 400 });
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "این لینک کسب‌وکار قبلاً استفاده شده است" }, { status: 409 });
   }
 
-  const passwordHash = await bcrypt.hash(phone, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
 
   try {
     const tenant = await prisma.tenant.create({
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
         phone,
         isActive: false,
         adminUsers: {
-          create: { username: phone, passwordHash, firstName, lastName },
+          create: { username: businessSlug, passwordHash, firstName, lastName },
         },
       },
     });

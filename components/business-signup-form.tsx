@@ -5,17 +5,23 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 type Step1 = { firstName: string; lastName: string; phone: string };
-type Step2 = { businessName: string; businessSlug: string };
+type Step2 = { businessName: string; businessSlug: string; password: string; confirmPassword: string };
 
 const PHONE_REGEX = /^09\d{9}$/;
 const SLUG_REGEX = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const MIN_PASSWORD_LENGTH = 6;
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "yourdomain.ir";
 
 export function BusinessSignupForm() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const [step1, setStep1] = useState<Step1>({ firstName: "", lastName: "", phone: "" });
-  const [step2, setStep2] = useState<Step2>({ businessName: "", businessSlug: "" });
+  const [step2, setStep2] = useState<Step2>({
+    businessName: "",
+    businessSlug: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -44,13 +50,28 @@ export function BusinessSignupForm() {
       setError("لینک کسب‌وکار فقط می‌تواند شامل حروف انگلیسی کوچک، عدد و خط تیره باشد");
       return;
     }
+    if (step2.password.length < MIN_PASSWORD_LENGTH) {
+      setError(`رمز عبور باید حداقل ${MIN_PASSWORD_LENGTH} کاراکتر باشد`);
+      return;
+    }
+    if (step2.password !== step2.confirmPassword) {
+      setError("رمز عبور و تکرار آن یکسان نیستند");
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch("/api/business/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...step1, ...step2 }),
+        body: JSON.stringify({
+          firstName: step1.firstName,
+          lastName: step1.lastName,
+          phone: step1.phone,
+          businessName: step2.businessName,
+          businessSlug: step2.businessSlug,
+          password: step2.password,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -59,9 +80,8 @@ export function BusinessSignupForm() {
       }
 
       const result = await signIn("tenant-admin", {
-        username: step1.phone,
-        password: step1.phone,
-        tenantSlug: step2.businessSlug,
+        username: step2.businessSlug,
+        password: step2.password,
         redirect: false,
       });
       if (result?.error) {
@@ -136,7 +156,7 @@ export function BusinessSignupForm() {
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            لینک کسب‌وکار
+            لینک کسب‌وکار (همان نام کاربری ورود به پنل خواهد بود)
             <input
               type="text"
               dir="ltr"
@@ -151,6 +171,24 @@ export function BusinessSignupForm() {
                 {step2.businessSlug}.{ROOT_DOMAIN}
               </span>
             )}
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            رمز عبور
+            <input
+              type="password"
+              className="rounded-lg border border-neutral-300 px-3 py-2"
+              value={step2.password}
+              onChange={(e) => setStep2((s) => ({ ...s, password: e.target.value }))}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            تکرار رمز عبور
+            <input
+              type="password"
+              className="rounded-lg border border-neutral-300 px-3 py-2"
+              value={step2.confirmPassword}
+              onChange={(e) => setStep2((s) => ({ ...s, confirmPassword: e.target.value }))}
+            />
           </label>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-2">
