@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { LogoutButton } from "@/components/logout-button";
 
 export function AdminNav({ tenantName }: { tenantName: string }) {
   return (
@@ -18,12 +16,7 @@ export function AdminNav({ tenantName }: { tenantName: string }) {
           تنظیمات
         </Link>
       </div>
-      <button
-        onClick={() => signOut({ callbackUrl: "/admin/login" })}
-        className="text-sm text-red-600 hover:underline"
-      >
-        خروج
-      </button>
+      <LogoutButton callbackUrl="/admin/login" />
     </nav>
   );
 }

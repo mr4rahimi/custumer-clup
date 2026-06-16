@@ -1,11 +1,17 @@
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { LandingClient } from "@/components/landing-client";
+import { PlatformLanding } from "@/components/platform-landing";
 
 export default async function Home() {
   const headersList = await headers();
   const slug = headersList.get("x-tenant-slug");
-  const tenant = slug ? await prisma.tenant.findUnique({ where: { slug } }) : null;
+
+  if (!slug) {
+    return <PlatformLanding />;
+  }
+
+  const tenant = await prisma.tenant.findUnique({ where: { slug } });
 
   if (!tenant) {
     return (

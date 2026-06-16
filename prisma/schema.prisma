@@ -14,6 +14,7 @@ model Tenant {
   smsApiKey      String?
   smsSender      String?
   welcomeMessage String?
+  isActive       Boolean     @default(false)
   plan           Plan        @default(TRIAL)
   planExpiresAt  DateTime?
   createdAt      DateTime    @default(now())
@@ -27,6 +28,8 @@ model AdminUser {
   id           String   @id @default(cuid())
   username     String
   passwordHash String
+  firstName    String?
+  lastName     String?
   tenantId     String
   tenant       Tenant   @relation(fields: [tenantId], references: [id])
   createdAt    DateTime @default(now())

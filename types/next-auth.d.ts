@@ -1,23 +1,28 @@
 import type { DefaultSession } from "next-auth";
 
+export type AdminRole = "tenant-admin" | "super-admin";
+
 declare module "next-auth" {
   interface User {
-    tenantId: string;
-    tenantSlug: string;
-    tenantName: string;
+    role: AdminRole;
+    tenantId?: string;
+    tenantSlug?: string;
+    tenantName?: string;
   }
 
   interface Session {
     user: DefaultSession["user"] & {
-      tenantId: string;
-      tenantSlug: string;
-      tenantName: string;
+      role: AdminRole;
+      tenantId?: string;
+      tenantSlug?: string;
+      tenantName?: string;
     };
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
+    role?: AdminRole;
     tenantId?: string;
     tenantSlug?: string;
     tenantName?: string;

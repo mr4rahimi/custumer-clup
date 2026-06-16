@@ -34,7 +34,17 @@
       "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/send?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"12345\"}')",
       "Bash(docker exec *)",
       "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/verify?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\",\"code\":\"00000\"}')",
-      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/verify?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\",\"code\":\"69368\"}')"
+      "Bash(curl -s -X POST \"http://localhost:3000/api/customer/otp/verify?tenant=demo-shop\" -H \"Content-Type: application/json\" -d '{\"phone\":\"09121234567\",\"code\":\"69368\"}')",
+      "Bash(kill 184952)",
+      "Bash(node *)",
+      "Bash(pkill -f \"headless\")",
+      "Bash(pkill -f \"google-chrome\")",
+      "Bash(rm -f /home/mehdi/Projects/ustomer-club/ui-test-admin.js /home/mehdi/Projects/ustomer-club/seed-admin.mjs /tmp/admin-dashboard.png /tmp/admin-customers.png)",
+      "Bash(npm uninstall *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(curl -s -X POST \"http://localhost:3000/api/business/signup\" -H \"Content-Type: application/json\" -d '{\"firstName\":\"تست\",\"lastName\":\"تستی\",\"phone\":\"09351112299\",\"businessName\":\"کافه دیباگ\",\"businessSlug\":\"debug-biz-1\"}')",
+      "Bash(kill 189032 189033 189045)"
     ]
   }
 }

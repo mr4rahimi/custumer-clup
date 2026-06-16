@@ -9,6 +9,7 @@ export const authOptions: NextAuthOptions = {
   pages: { signIn: "/admin/login" },
   providers: [
     CredentialsProvider({
+      id: "tenant-admin",
       name: "Credentials",
       credentials: {
         username: { label: "نام کاربری", type: "text" },
@@ -34,16 +35,39 @@ export const authOptions: NextAuthOptions = {
         return {
           id: admin.id,
           name: admin.username,
+          role: "tenant-admin",
           tenantId: tenant.id,
           tenantSlug: tenant.slug,
           tenantName: tenant.name,
         };
       },
     }),
+    CredentialsProvider({
+      id: "super-admin",
+      name: "SuperAdminCredentials",
+      credentials: {
+        username: { label: "نام کاربری", type: "text" },
+        password: { label: "رمز عبور", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.username || !credentials?.password) return null;
+
+        const validUsername = process.env.SUPER_ADMIN_USERNAME;
+        const validPassword = process.env.SUPER_ADMIN_PASSWORD;
+        if (!validUsername || !validPassword) return null;
+
+        if (credentials.username !== validUsername || credentials.password !== validPassword) {
+          return null;
+        }
+
+        return { id: "super-admin", name: credentials.username, role: "super-admin" };
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.role = user.role;
         token.tenantId = user.tenantId;
         token.tenantSlug = user.tenantSlug;
         token.tenantName = user.tenantName;
@@ -51,9 +75,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.tenantId = token.tenantId as string;
-      session.user.tenantSlug = token.tenantSlug as string;
-      session.user.tenantName = token.tenantName as string;
+      session.user.role = token.role as "tenant-admin" | "super-admin";
+      session.user.tenantId = token.tenantId;
+      session.user.tenantSlug = token.tenantSlug;
+      session.user.tenantName = token.tenantName;
       return session;
     },
   },

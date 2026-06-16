@@ -4,11 +4,10 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export function AdminLoginForm({ tenantSlug }: { tenantSlug: string | null }) {
+export function SuperAdminLoginForm() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [slug, setSlug] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,17 +16,12 @@ export function AdminLoginForm({ tenantSlug }: { tenantSlug: string | null }) {
     setError(null);
     setLoading(true);
     try {
-      const result = await signIn("tenant-admin", {
-        username,
-        password,
-        tenantSlug: tenantSlug ?? slug,
-        redirect: false,
-      });
+      const result = await signIn("super-admin", { username, password, redirect: false });
       if (result?.error) {
-        setError("نام کاربری، رمز عبور یا لینک کسب‌وکار اشتباه است");
+        setError("نام کاربری یا رمز عبور اشتباه است");
         return;
       }
-      router.push("/admin/dashboard");
+      router.push("/super-admin/dashboard");
       router.refresh();
     } finally {
       setLoading(false);
@@ -36,18 +30,6 @@ export function AdminLoginForm({ tenantSlug }: { tenantSlug: string | null }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {tenantSlug === null && (
-        <label className="flex flex-col gap-1 text-sm">
-          لینک کسب‌وکار
-          <input
-            type="text"
-            dir="ltr"
-            className="rounded-lg border border-neutral-300 px-3 py-2"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-          />
-        </label>
-      )}
       <label className="flex flex-col gap-1 text-sm">
         نام کاربری
         <input
